@@ -98,105 +98,105 @@ inline constexpr auto chars_to_int_big_endian(T begin)
     }
 }
 
-template <char8_t const *alphabet, typename I, typename O>
+template <char8_t const *Alphabet, typename I, typename O>
 inline constexpr void encode_impl_b64_6(I begin, O &first)
 {
     auto data = chars_to_int_big_endian<6>(begin);
 
-    *first = alphabet[(data >> 58) & 63];
+    *first = Alphabet[(data >> 58) & 63];
     ++first;
-    *first = alphabet[(data >> 52) & 63];
+    *first = Alphabet[(data >> 52) & 63];
     ++first;
-    *first = alphabet[(data >> 46) & 63];
+    *first = Alphabet[(data >> 46) & 63];
     ++first;
-    *first = alphabet[(data >> 40) & 63];
+    *first = Alphabet[(data >> 40) & 63];
     ++first;
-    *first = alphabet[(data >> 34) & 63];
+    *first = Alphabet[(data >> 34) & 63];
     ++first;
-    *first = alphabet[(data >> 28) & 63];
+    *first = Alphabet[(data >> 28) & 63];
     ++first;
-    *first = alphabet[(data >> 22) & 63];
+    *first = Alphabet[(data >> 22) & 63];
     ++first;
-    *first = alphabet[(data >> 16) & 63];
+    *first = Alphabet[(data >> 16) & 63];
     ++first;
 }
 
-template <char8_t const *alphabet, typename I, typename O>
+template <char8_t const *Alphabet, typename I, typename O>
 inline constexpr void encode_impl_b64_3(I begin, O &first)
 {
     auto data = chars_to_int_big_endian<3>(begin);
 
-    *first = alphabet[(data >> 26) & 63];
+    *first = Alphabet[(data >> 26) & 63];
     ++first;
-    *first = alphabet[(data >> 20) & 63];
+    *first = Alphabet[(data >> 20) & 63];
     ++first;
-    *first = alphabet[(data >> 14) & 63];
+    *first = Alphabet[(data >> 14) & 63];
     ++first;
-    *first = alphabet[(data >> 8) & 63];
+    *first = Alphabet[(data >> 8) & 63];
     ++first;
 }
 
-template <char8_t const *alphabet, bool Padding, typename I, typename O>
+template <char8_t const *Alphabet, bool Padding, typename I, typename O>
 inline constexpr void encode_impl_b64_2(I begin, O &first)
 {
     auto data = chars_to_int_big_endian<2>(begin);
 
-    *first = alphabet[(data >> 26) & 63];
+    *first = Alphabet[(data >> 26) & 63];
     ++first;
-    *first = alphabet[(data >> 20) & 63];
+    *first = Alphabet[(data >> 20) & 63];
     ++first;
-    *first = alphabet[(data >> 14) & 63];
+    *first = Alphabet[(data >> 14) & 63];
     ++first;
 
     if constexpr (Padding)
     {
-        *first = alphabet[64];
+        *first = Alphabet[64];
         ++first;
     }
 }
 
-template <char8_t const *alphabet, bool Padding, typename I, typename O>
+template <char8_t const *Alphabet, bool Padding, typename I, typename O>
 inline constexpr void encode_impl_b64_1(I begin, O &first)
 {
     auto a = to_uc(*begin);
     auto b = a >> 2;        // XXXXXX
     auto c = (a << 4) & 63; // XX0000
 
-    *first = alphabet[b];
+    *first = Alphabet[b];
     ++first;
-    *first = alphabet[c];
+    *first = Alphabet[c];
     ++first;
 
     if constexpr (Padding)
     {
-        *first = alphabet[64]; // pad1
+        *first = Alphabet[64]; // pad1
         ++first;
-        *first = alphabet[64]; // pad2
+        *first = Alphabet[64]; // pad2
         ++first;
     }
 }
 
-template <char8_t const *alphabet, bool Padding, typename I, typename O>
+template <char8_t const *Alphabet, bool Padding, typename I, typename O>
 inline constexpr void encode_impl_b64(I begin, I end, O &first)
 {
     if constexpr (sizeof(std::size_t) == 8)
     {
         for (; end - begin > 5; begin += 6)
-            encode_impl_b64_6<alphabet>(begin, first);
+            encode_impl_b64_6<Alphabet>(begin, first);
     }
 
     for (; end - begin > 2; begin += 3)
-        encode_impl_b64_3<alphabet>(begin, first);
+        encode_impl_b64_3<Alphabet>(begin, first);
 
     if (end - begin == 2)
-        encode_impl_b64_2<alphabet, Padding>(begin, first);
+        encode_impl_b64_2<Alphabet, Padding>(begin, first);
     else if (end - begin) // == 1
-        encode_impl_b64_1<alphabet, Padding>(begin, first);
+        encode_impl_b64_1<Alphabet, Padding>(begin, first);
 
     // == 0  fallthrough
 }
 
-template <char8_t const *alphabet, typename I, typename O>
+template <char8_t const *Alphabet, typename I, typename O>
 inline constexpr void encode_impl_b64_ctx(detail::buf_ref buf, detail::sig_ref sig, I begin, I end, O &first)
 {
     if (sig == 2) // 0, 1, 2
@@ -210,7 +210,7 @@ inline constexpr void encode_impl_b64_ctx(detail::buf_ref buf, detail::sig_ref s
         lbuf[1] = buf[1];
         lbuf[2] = to_uc(*(begin++));
 
-        encode_impl_b64_3<alphabet>(std::begin(lbuf), first);
+        encode_impl_b64_3<Alphabet>(std::begin(lbuf), first);
     }
     else if (sig) // == 1
     {
@@ -232,18 +232,18 @@ inline constexpr void encode_impl_b64_ctx(detail::buf_ref buf, detail::sig_ref s
             lbuf[1] = to_uc(*(begin++));
             lbuf[2] = to_uc(*(begin++));
 
-            encode_impl_b64_3<alphabet>(std::begin(lbuf), first);
+            encode_impl_b64_3<Alphabet>(std::begin(lbuf), first);
         }
     }
 
     if constexpr (sizeof(std::size_t) == 8)
     {
         for (; end - begin > 5; begin += 6)
-            encode_impl_b64_6<alphabet>(begin, first);
+            encode_impl_b64_6<Alphabet>(begin, first);
     }
 
     for (; end - begin > 3; begin += 3)
-        encode_impl_b64_3<alphabet>(begin, first);
+        encode_impl_b64_3<Alphabet>(begin, first);
 
     if (end - begin == 2)
     {
@@ -262,169 +262,169 @@ inline constexpr void encode_impl_b64_ctx(detail::buf_ref buf, detail::sig_ref s
     }
 }
 
-template <char8_t const *alphabet, bool Padding, typename O>
+template <char8_t const *Alphabet, bool Padding, typename O>
 inline constexpr void encode_impl_b64_ctx(detail::buf_ref buf, detail::sig_ref sig, O &first)
 {
     if (sig == 2)
-        encode_impl::encode_impl_b64_2<alphabet, Padding>(std::begin(buf), first);
+        encode_impl::encode_impl_b64_2<Alphabet, Padding>(std::begin(buf), first);
     else if (sig) // == 1
-        encode_impl::encode_impl_b64_1<alphabet, Padding>(std::begin(buf), first);
+        encode_impl::encode_impl_b64_1<Alphabet, Padding>(std::begin(buf), first);
     // == 0  fallthrough
 
     // clear ctx
     sig = 0;
 }
 
-template <char8_t const *alphabet, typename I, typename O>
+template <char8_t const *Alphabet, typename I, typename O>
 inline constexpr void encode_impl_b32_5(I begin, O &first)
 {
     auto data = chars_to_int_big_endian<5>(begin);
 
-    *first = alphabet[(data >> 59) & 31];
+    *first = Alphabet[(data >> 59) & 31];
     ++first;
-    *first = alphabet[(data >> 54) & 31];
+    *first = Alphabet[(data >> 54) & 31];
     ++first;
-    *first = alphabet[(data >> 49) & 31];
+    *first = Alphabet[(data >> 49) & 31];
     ++first;
-    *first = alphabet[(data >> 44) & 31];
+    *first = Alphabet[(data >> 44) & 31];
     ++first;
-    *first = alphabet[(data >> 39) & 31];
+    *first = Alphabet[(data >> 39) & 31];
     ++first;
-    *first = alphabet[(data >> 34) & 31];
+    *first = Alphabet[(data >> 34) & 31];
     ++first;
-    *first = alphabet[(data >> 29) & 31];
+    *first = Alphabet[(data >> 29) & 31];
     ++first;
-    *first = alphabet[(data >> 24) & 31];
+    *first = Alphabet[(data >> 24) & 31];
     ++first;
 }
 
-template <char8_t const *alphabet, bool Padding, typename I, typename O>
+template <char8_t const *Alphabet, bool Padding, typename I, typename O>
 inline constexpr void encode_impl_b32_4(I begin, O &first)
 {
     auto data = chars_to_int_big_endian<4>(begin);
 
-    *first = alphabet[(data >> 27) & 31];
+    *first = Alphabet[(data >> 27) & 31];
     ++first;
-    *first = alphabet[(data >> 22) & 31];
+    *first = Alphabet[(data >> 22) & 31];
     ++first;
-    *first = alphabet[(data >> 17) & 31];
+    *first = Alphabet[(data >> 17) & 31];
     ++first;
-    *first = alphabet[(data >> 12) & 31];
+    *first = Alphabet[(data >> 12) & 31];
     ++first;
-    *first = alphabet[(data >> 7) & 31];
+    *first = Alphabet[(data >> 7) & 31];
     ++first;
-    *first = alphabet[(data >> 2) & 31];
+    *first = Alphabet[(data >> 2) & 31];
     ++first;
     // NB: left shift
-    *first = alphabet[(data << 3) & 31];
+    *first = Alphabet[(data << 3) & 31];
     ++first;
 
     if constexpr (Padding)
     {
-        *first = alphabet[32];
+        *first = Alphabet[32];
         ++first;
     }
 }
 
-template <char8_t const *alphabet, bool Padding, typename I, typename O>
+template <char8_t const *Alphabet, bool Padding, typename I, typename O>
 inline constexpr void encode_impl_b32_3(I begin, O &first)
 {
     auto data = chars_to_int_big_endian<3>(begin);
 
-    *first = alphabet[(data >> 27) & 31];
+    *first = Alphabet[(data >> 27) & 31];
     ++first;
-    *first = alphabet[(data >> 22) & 31];
+    *first = Alphabet[(data >> 22) & 31];
     ++first;
-    *first = alphabet[(data >> 17) & 31];
+    *first = Alphabet[(data >> 17) & 31];
     ++first;
-    *first = alphabet[(data >> 12) & 31];
+    *first = Alphabet[(data >> 12) & 31];
     ++first;
-    *first = alphabet[(data >> 7) & 31];
+    *first = Alphabet[(data >> 7) & 31];
     ++first;
 
     if constexpr (Padding)
     {
-        *first = alphabet[32];
+        *first = Alphabet[32];
         ++first;
-        *first = alphabet[32];
+        *first = Alphabet[32];
         ++first;
-        *first = alphabet[32];
+        *first = Alphabet[32];
         ++first;
     }
 }
 
-template <char8_t const *alphabet, bool Padding, typename I, typename O>
+template <char8_t const *Alphabet, bool Padding, typename I, typename O>
 inline constexpr void encode_impl_b32_2(I begin, O &first)
 {
     auto data = chars_to_int_big_endian<2>(begin);
 
-    *first = alphabet[(data >> 27) & 31];
+    *first = Alphabet[(data >> 27) & 31];
     ++first;
-    *first = alphabet[(data >> 22) & 31];
+    *first = Alphabet[(data >> 22) & 31];
     ++first;
-    *first = alphabet[(data >> 17) & 31];
+    *first = Alphabet[(data >> 17) & 31];
     ++first;
-    *first = alphabet[(data >> 12) & 31];
+    *first = Alphabet[(data >> 12) & 31];
     ++first;
 
     if constexpr (Padding)
     {
-        *first = alphabet[32];
+        *first = Alphabet[32];
         ++first;
-        *first = alphabet[32];
+        *first = Alphabet[32];
         ++first;
-        *first = alphabet[32];
+        *first = Alphabet[32];
         ++first;
-        *first = alphabet[32];
+        *first = Alphabet[32];
         ++first;
     }
 }
 
-template <char8_t const *alphabet, bool Padding, typename I, typename O>
+template <char8_t const *Alphabet, bool Padding, typename I, typename O>
 inline constexpr void encode_impl_b32_1(I begin, O &first)
 {
     auto a = to_uc(*(begin));
 
-    *first = alphabet[a >> 3];
+    *first = Alphabet[a >> 3];
     ++first;
-    *first = alphabet[(a << 2) & 31];
+    *first = Alphabet[(a << 2) & 31];
     ++first;
 
     if constexpr (Padding)
     {
-        *first = alphabet[32];
+        *first = Alphabet[32];
         ++first;
-        *first = alphabet[32];
+        *first = Alphabet[32];
         ++first;
-        *first = alphabet[32];
+        *first = Alphabet[32];
         ++first;
-        *first = alphabet[32];
+        *first = Alphabet[32];
         ++first;
-        *first = alphabet[32];
+        *first = Alphabet[32];
         ++first;
-        *first = alphabet[32];
+        *first = Alphabet[32];
         ++first;
     }
 }
 
-template <char8_t const *alphabet, bool Padding = true, typename I, typename O>
+template <char8_t const *Alphabet, bool Padding, typename I, typename O>
 inline constexpr void encode_impl_b32(I begin, I end, O &first)
 {
     for (; end - begin > 4; begin += 5)
-        encode_impl_b32_5(alphabet, begin, first);
+        encode_impl_b32_5<Alphabet>(begin, first);
 
     if (end - begin == 4)
-        encode_impl_b32_4<Padding, alphabet>(begin, first);
+        encode_impl_b32_4<Padding, Alphabet>(begin, first);
     else if (end - begin == 3)
-        encode_impl_b32_3<Padding, alphabet>(begin, first);
+        encode_impl_b32_3<Padding, Alphabet>(begin, first);
     else if (end - begin == 2)
-        encode_impl_b32_2<Padding, alphabet>(begin, first);
+        encode_impl_b32_2<Padding, Alphabet>(begin, first);
     else if (end - begin) // == 1
-        encode_impl_b32_1<Padding, alphabet>(begin, first);
+        encode_impl_b32_1<Padding, Alphabet>(begin, first);
     // == 0  fallthrough
 }
 
-template <char8_t const *alphabet, typename I, typename O>
+template <char8_t const *Alphabet, typename I, typename O>
 inline constexpr void encode_impl_b32_ctx(detail::buf_ref buf, detail::sig_ref sig, I begin, I end, O &first)
 {
 #if __has_cpp_attribute(assume)
@@ -448,11 +448,11 @@ inline constexpr void encode_impl_b32_ctx(detail::buf_ref buf, detail::sig_ref s
         std::copy(begin, begin + (5 - sig), std::begin(lbuf) + sig);
         begin += (5 - sig);
 
-        encode_impl_b32_5<alphabet>(std::begin(lbuf), first);
+        encode_impl_b32_5<Alphabet>(std::begin(lbuf), first);
     }
 
     for (; end - begin > 4; begin += 5)
-        encode_impl_b32_5<alphabet>(begin, first);
+        encode_impl_b32_5<Alphabet>(begin, first);
 
     sig = static_cast<unsigned char>(end - begin);
 
@@ -460,22 +460,22 @@ inline constexpr void encode_impl_b32_ctx(detail::buf_ref buf, detail::sig_ref s
         buf[i] = to_uc(*begin);
 }
 
-template <char8_t const *alphabet, bool Padding, typename A, typename O>
+template <char8_t const *Alphabet, bool Padding, typename A, typename O>
 inline constexpr void encode_impl_b32_ctx(detail::buf_ref buf, detail::sig_ref sig, O &first)
 {
     if (sig == 1)
-        encode_impl_b32_1<Padding, alphabet>(std::begin(buf), first);
+        encode_impl_b32_1<Padding, Alphabet>(std::begin(buf), first);
     else if (sig == 2)
-        encode_impl_b32_2<Padding, alphabet>(std::begin(buf), first);
+        encode_impl_b32_2<Padding, Alphabet>(std::begin(buf), first);
     else if (sig == 3)
-        encode_impl_b32_3<Padding, alphabet>(std::begin(buf), first);
+        encode_impl_b32_3<Padding, Alphabet>(std::begin(buf), first);
     else if (sig == 4)
-        encode_impl_b32_4<Padding, alphabet>(std::begin(buf), first);
+        encode_impl_b32_4<Padding, Alphabet>(std::begin(buf), first);
 
     sig = 0;
 }
 
-template <char8_t const *alphabet, typename I, typename O>
+template <char8_t const *Alphabet, typename I, typename O>
 inline constexpr void encode_impl_b16(I begin, I end, O &first)
 {
     if constexpr (sizeof(size_t) == 8)
@@ -485,7 +485,7 @@ inline constexpr void encode_impl_b16(I begin, I end, O &first)
             auto data = chars_to_int_big_endian<8>(begin);
 
             for (std::size_t i{}; i < 16; ++i)
-                *(first++) = alphabet[(data >> (64 - (i + 1) * 4)) & 15];
+                *(first++) = Alphabet[(data >> (64 - (i + 1) * 4)) & 15];
         }
     }
     else // 32-bit machine
@@ -495,7 +495,7 @@ inline constexpr void encode_impl_b16(I begin, I end, O &first)
             auto data = chars_to_int_big_endian<4>(begin);
 
             for (std::size_t i{}; i < 8; ++i)
-                *(first++) = alphabet[(data >> (32 - (i + 1) * 4)) & 15];
+                *(first++) = Alphabet[(data >> (32 - (i + 1) * 4)) & 15];
         }
     }
 
@@ -503,9 +503,9 @@ inline constexpr void encode_impl_b16(I begin, I end, O &first)
     {
         auto data = to_uc(*begin);
 
-        *first = alphabet[data >> 4];
+        *first = Alphabet[data >> 4];
         ++first;
-        *first = alphabet[data & 15];
+        *first = Alphabet[data & 15];
         ++first;
     }
 }

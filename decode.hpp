@@ -282,10 +282,10 @@ inline constexpr bool is_valid(T t, unsigned char u) noexcept
     return valid_stage1(t) && valid_stage2(u);
 }
 
-template <char8_t const *table, typename T>
+template <char8_t const *Table, typename T>
 inline constexpr unsigned char decode_single(T t) noexcept
 {
-    return table[static_cast<unsigned char>(t)];
+    return Table[static_cast<unsigned char>(t)];
 }
 
 struct decode_status_b64_b32
@@ -309,10 +309,10 @@ struct decode_status_b64_b32
 
     // If sig is not 0 at the end of decoding, then buf_ must be 0 and discarded.
 
-    template <char8_t const *table, typename C, typename Out>
+    template <char8_t const *Table, typename C, typename Out>
     bool write_b64(C c, Out &first)
     {
-        auto res = decode_single<table>(c);
+        auto res = decode_single<Table>(c);
 
         if (!is_valid(c, res))
             return false;
@@ -369,10 +369,10 @@ struct decode_status_b64_b32
         }
     }
 
-    template <char8_t const *table, typename C, typename Out>
+    template <char8_t const *Table, typename C, typename Out>
     bool write_b32(C c, Out &first)
     {
-        auto res = decode_single<table>(c);
+        auto res = decode_single<Table>(c);
 
         if (!is_valid(c, res))
             return false;
@@ -455,7 +455,7 @@ struct decode_status_b64_b32
     }
 };
 
-template <char8_t const *table, bool Padding, typename In, typename Out>
+template <char8_t const *Table, bool Padding, typename In, typename Out>
 inline constexpr In decode_impl_b32(In begin, In end, Out &first)
 {
     static_assert(std::is_pointer_v<In>);
@@ -464,7 +464,7 @@ inline constexpr In decode_impl_b32(In begin, In end, Out &first)
 
     for (; begin != end; ++begin)
     {
-        if (!status.write_b64<table>(*begin, first))
+        if (!status.write_b64<Table>(*begin, first))
             break;
     }
 
@@ -476,7 +476,7 @@ inline constexpr In decode_impl_b32(In begin, In end, Out &first)
     return begin;
 }
 
-template <char8_t const *table, bool Padding, typename In, typename Out>
+template <char8_t const *Table, bool Padding, typename In, typename Out>
 inline constexpr In decode_impl_b64(In begin, In end, Out &first)
 {
     static_assert(std::is_pointer_v<In>);
@@ -485,7 +485,7 @@ inline constexpr In decode_impl_b64(In begin, In end, Out &first)
 
     for (; begin != end; ++begin)
     {
-        if (!status.write_b64<table>(*begin, first))
+        if (!status.write_b64<Table>(*begin, first))
             break;
     }
 
@@ -497,7 +497,7 @@ inline constexpr In decode_impl_b64(In begin, In end, Out &first)
     return begin;
 }
 
-template <char8_t const *table, typename In, typename Out>
+template <char8_t const *Table, typename In, typename Out>
 inline constexpr In decode_impl_b64_ctx(detail::sig_ref sig, detail::buf_ref buf, In begin, In end, Out &first)
 {
     static_assert(std::is_pointer_v<In>);
@@ -506,7 +506,7 @@ inline constexpr In decode_impl_b64_ctx(detail::sig_ref sig, detail::buf_ref buf
 
     for (; begin != end; ++begin)
     {
-        if (!status.write_b64<table>(*begin, first))
+        if (!status.write_b64<Table>(*begin, first))
             break;
     }
 
@@ -516,7 +516,7 @@ inline constexpr In decode_impl_b64_ctx(detail::sig_ref sig, detail::buf_ref buf
     return begin;
 }
 
-template <char8_t const *table, typename In, typename Out>
+template <char8_t const *Table, typename In, typename Out>
 inline constexpr In decode_impl_b32_ctx(detail::sig_ref sig, detail::buf_ref buf, In begin, In end, Out &first)
 {
     static_assert(std::is_pointer_v<In>);
@@ -525,7 +525,7 @@ inline constexpr In decode_impl_b32_ctx(detail::sig_ref sig, detail::buf_ref buf
 
     for (; begin != end; ++begin)
     {
-        if (!status.write_b32<table>(*begin, first))
+        if (!status.write_b32<Table>(*begin, first))
             break;
     }
 
@@ -535,7 +535,7 @@ inline constexpr In decode_impl_b32_ctx(detail::sig_ref sig, detail::buf_ref buf
     return begin;
 }
 
-template <char8_t const *table, bool Padding, typename In>
+template <char8_t const *Table, bool Padding, typename In>
 inline constexpr void decode_impl_b64_ctx(detail::sig_ref sig, detail::buf_ref buf, In &begin, In &end) noexcept
 {
     auto sig_ = sig;
@@ -548,7 +548,7 @@ inline constexpr void decode_impl_b64_ctx(detail::sig_ref sig, detail::buf_ref b
     }
 }
 
-template <char8_t const *table, bool Padding, typename In>
+template <char8_t const *Table, bool Padding, typename In>
 inline constexpr void decode_impl_b32_ctx(detail::sig_ref sig, detail::buf_ref buf, In &begin, In &end) noexcept
 {
     auto sig_ = sig;
@@ -561,7 +561,7 @@ inline constexpr void decode_impl_b32_ctx(detail::sig_ref sig, detail::buf_ref b
     }
 }
 
-template <char8_t const *table, typename In, typename Out>
+template <char8_t const *Table, typename In, typename Out>
 inline constexpr In decode_impl_b16(In begin, In end, Out &first)
 {
     static_assert(std::is_pointer_v<In>);
@@ -572,7 +572,7 @@ inline constexpr In decode_impl_b16(In begin, In end, Out &first)
     for (; begin != end; ++begin)
     {
         auto c = *begin;
-        auto res = decode_single<table>(c);
+        auto res = decode_single<Table>(c);
 
         if (!is_valid(c, res))
             break;
@@ -594,7 +594,7 @@ inline constexpr In decode_impl_b16(In begin, In end, Out &first)
     return begin;
 }
 
-template <char8_t const *table, typename In, typename Out>
+template <char8_t const *Table, typename In, typename Out>
 inline constexpr In decode_impl_b16_ctx(detail::sig_ref sig, detail::buf_ref buf, In begin, In end, Out &first)
 {
     static_assert(std::is_pointer_v<In>);
@@ -602,7 +602,7 @@ inline constexpr In decode_impl_b16_ctx(detail::sig_ref sig, detail::buf_ref buf
     for (; begin != end; ++begin)
     {
         auto c = *begin;
-        auto res = decode_single<table>(c);
+        auto res = decode_single<Table>(c);
 
         if (!is_valid(c, res))
             break;

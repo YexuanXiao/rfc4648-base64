@@ -104,23 +104,23 @@ class rfc4648_context
     friend inline constexpr In rfc4648_decode(rfc4648_context &ctx, In begin, In end);
 };
 
-template <rfc4648_kind kind = rfc4648_kind::base64>
+template <rfc4648_kind Kind = rfc4648_kind::base64>
 inline constexpr std::size_t rfc4648_encode_length(std::size_t input) noexcept
 {
-    if constexpr (detail::get_family<kind>() == rfc4648_kind::base64)
+    if constexpr (detail::get_family<Kind>() == rfc4648_kind::base64)
         return (input + 5) / 6 * 8;
-    else if constexpr (detail::get_family<kind>() == rfc4648_kind::base32)
+    else if constexpr (detail::get_family<Kind>() == rfc4648_kind::base32)
         return (input + 4) / 5 * 8;
     else
         return (input + 3) / 4 * 8;
 }
 
-template <rfc4648_kind kind = rfc4648_kind::base64>
+template <rfc4648_kind Kind = rfc4648_kind::base64>
 inline constexpr std::size_t rfc4648_decode_length(std::size_t input) noexcept
 {
-    if constexpr (detail::get_family<kind>() == rfc4648_kind::base64)
+    if constexpr (detail::get_family<Kind>() == rfc4648_kind::base64)
         return (input + 7) / 8 * 6;
-    else if constexpr (detail::get_family<kind>() == rfc4648_kind::base32)
+    else if constexpr (detail::get_family<Kind>() == rfc4648_kind::base32)
         return (input + 7) / 8 * 5;
     else
         return (input + 7) / 8 * 4;
