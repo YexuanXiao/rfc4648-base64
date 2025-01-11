@@ -2,6 +2,8 @@
 
 A plain header-only [RFC 4648](https://www.rfc-editor.org/rfc/rfc4648) encoding/decoding library, but with the most modern C++ API design.
 
+This repository uses NTTP to select encoding/decoding schemes and control padding characters. [Another way](https://github.com/YexuanXiao/rfc4648-afo) is to use function parameters, which allows it to be implemented as [Algorithm Function Objects](https://en.cppreference.com/w/cpp/algorithm/ranges#Algorithm_function_objects) (AFOs).
+
 All variants of RFC 4648 are supported and the Crockford variant is available.
 
 Support input from discontinuous multiple buffers.
