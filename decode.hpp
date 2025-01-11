@@ -537,7 +537,7 @@ inline constexpr In decode_impl_b32_ctx(detail::sig_ref sig, detail::buf_ref buf
     return begin;
 }
 
-template <table_ref Table, bool Padding, typename In>
+template <bool Padding, typename In>
 inline constexpr void decode_impl_b64_ctx(detail::sig_ref sig, detail::buf_ref buf, In &begin, In &end) noexcept
 {
     auto sig_ = sig;
@@ -550,7 +550,7 @@ inline constexpr void decode_impl_b64_ctx(detail::sig_ref sig, detail::buf_ref b
     }
 }
 
-template <table_ref Table, bool Padding, typename In>
+template <bool Padding, typename In>
 inline constexpr void decode_impl_b32_ctx(detail::sig_ref sig, detail::buf_ref buf, In &begin, In &end) noexcept
 {
     auto sig_ = sig;
@@ -717,11 +717,9 @@ inline constexpr In rfc4648_decode(rfc4648_context &ctx, In begin, In end)
     decltype(begin_ptr) last_ptr = begin_ptr;
 
     if constexpr (detail::get_family<Kind>() == rfc4648_kind::base64)
-        decode_impl::decode_impl_b64_ctx<decode_impl::get_table<Kind>(), Padding>(ctx.sig_, ctx.buf_, last_ptr,
-                                                                                  end_ptr);
+        decode_impl::decode_impl_b64_ctx<Padding>(ctx.sig_, ctx.buf_, last_ptr, end_ptr);
     if constexpr (detail::get_family<Kind>() == rfc4648_kind::base32)
-        decode_impl::decode_impl_b32_ctx<decode_impl::get_table<Kind>(), Padding>(ctx.sig_, ctx.buf_, last_ptr,
-                                                                                  end_ptr);
+        decode_impl::decode_impl_b32_ctx<Padding>(ctx.sig_, ctx.buf_, last_ptr, end_ptr);
     // no effect when family is base16 and CHAR_BIT is 8
 
     return {begin + (last_ptr - begin_ptr)};
