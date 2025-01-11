@@ -14,16 +14,48 @@ namespace encode_impl
 {
 namespace pattern
 {
-inline constexpr char8_t base64[] = u8"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-inline constexpr char8_t base64_url[] = u8"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_=";
-inline constexpr char8_t base32[] = u8"ABCDEFGHIJKLMNOPQRSTUVWXYZ234567=";
-inline constexpr char8_t base32_lower[] = u8"abcdefghijklmnopqrstuvwxyz234567=";
-inline constexpr char8_t base32_hex[] = u8"0123456789ABCDEFGHIJKLMNOPQRSTUV=";
-inline constexpr char8_t base32_hex_lower[] = u8"0123456789abcdefghijklmnopqrstuv=";
-inline constexpr char8_t base32_crockford[] = u8"0123456789ABCDEFGHJKMNPQRSTVWXYZ=";
-inline constexpr char8_t base32_crockford_lower[] = u8"0123456789abcdefghjkmnpqrstvwxyz=";
-inline constexpr char8_t base16[] = u8"0123456789ABCDEF";
-inline constexpr char8_t base16_lower[] = u8"0123456789abcdef";
+// u8"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+inline constexpr char8_t base64[] = {
+    u8'A', u8'B', u8'C', u8'D', u8'E', u8'F', u8'G', u8'H', u8'I', u8'J', u8'K', u8'L', u8'M', u8'N', u8'O', u8'P',
+    u8'Q', u8'R', u8'S', u8'T', u8'U', u8'V', u8'W', u8'X', u8'Y', u8'Z', u8'a', u8'b', u8'c', u8'd', u8'e', u8'f',
+    u8'g', u8'h', u8'i', u8'j', u8'k', u8'l', u8'm', u8'n', u8'o', u8'p', u8'q', u8'r', u8's', u8't', u8'u', u8'v',
+    u8'w', u8'x', u8'y', u8'z', u8'0', u8'1', u8'2', u8'3', u8'4', u8'5', u8'6', u8'7', u8'8', u8'9', u8'+', u8'/'};
+// u8"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+inline constexpr char8_t base64_url[] = {
+    u8'A', u8'B', u8'C', u8'D', u8'E', u8'F', u8'G', u8'H', u8'I', u8'J', u8'K', u8'L', u8'M', u8'N', u8'O', u8'P',
+    u8'Q', u8'R', u8'S', u8'T', u8'U', u8'V', u8'W', u8'X', u8'Y', u8'Z', u8'a', u8'b', u8'c', u8'd', u8'e', u8'f',
+    u8'g', u8'h', u8'i', u8'j', u8'k', u8'l', u8'm', u8'n', u8'o', u8'p', u8'q', u8'r', u8's', u8't', u8'u', u8'v',
+    u8'w', u8'x', u8'y', u8'z', u8'0', u8'1', u8'2', u8'3', u8'4', u8'5', u8'6', u8'7', u8'8', u8'9', u8'-', u8'_'};
+// u8"ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
+inline constexpr char8_t base32[] = {u8'A', u8'B', u8'C', u8'D', u8'E', u8'F', u8'G', u8'H', u8'I', u8'J', u8'K',
+                                     u8'L', u8'M', u8'N', u8'O', u8'P', u8'Q', u8'R', u8'S', u8'T', u8'U', u8'V',
+                                     u8'W', u8'X', u8'Y', u8'Z', u8'2', u8'3', u8'4', u8'5', u8'6', u8'7'};
+// u8"abcdefghijklmnopqrstuvwxyz234567"
+inline constexpr char8_t base32_lower[] = {u8'a', u8'b', u8'c', u8'd', u8'e', u8'f', u8'g', u8'h', u8'i', u8'j', u8'k',
+                                           u8'l', u8'm', u8'n', u8'o', u8'p', u8'q', u8'r', u8's', u8't', u8'u', u8'v',
+                                           u8'w', u8'x', u8'y', u8'z', u8'2', u8'3', u8'4', u8'5', u8'6', u8'7'};
+// u8"0123456789ABCDEFGHIJKLMNOPQRSTUV"
+inline constexpr char8_t base32_hex[] = {u8'0', u8'1', u8'2', u8'3', u8'4', u8'5', u8'6', u8'7', u8'8', u8'9', u8'A',
+                                         u8'B', u8'C', u8'D', u8'E', u8'F', u8'G', u8'H', u8'I', u8'J', u8'K', u8'L',
+                                         u8'M', u8'N', u8'O', u8'P', u8'Q', u8'R', u8'S', u8'T', u8'U', u8'V'};
+// u8"0123456789abcdefghijklmnopqrstuv"
+inline constexpr char8_t base32_hex_lower[] = {
+    u8'0', u8'1', u8'2', u8'3', u8'4', u8'5', u8'6', u8'7', u8'8', u8'9', u8'a', u8'b', u8'c', u8'd', u8'e', u8'f',
+    u8'g', u8'h', u8'i', u8'j', u8'k', u8'l', u8'm', u8'n', u8'o', u8'p', u8'q', u8'r', u8's', u8't', u8'u', u8'v'};
+// u8"0123456789ABCDEFGHJKMNPQRSTVWXYZ"
+inline constexpr char8_t base32_crockford[] = {
+    u8'0', u8'1', u8'2', u8'3', u8'4', u8'5', u8'6', u8'7', u8'8', u8'9', u8'A', u8'B', u8'C', u8'D', u8'E', u8'F',
+    u8'G', u8'H', u8'J', u8'K', u8'M', u8'N', u8'P', u8'Q', u8'R', u8'S', u8'T', u8'V', u8'W', u8'X', u8'Y', u8'Z'};
+// u8"0123456789abcdefghjkmnpqrstvwxyz"
+inline constexpr char8_t base32_crockford_lower[] = {
+    u8'0', u8'1', u8'2', u8'3', u8'4', u8'5', u8'6', u8'7', u8'8', u8'9', u8'a', u8'b', u8'c', u8'd', u8'e', u8'f',
+    u8'g', u8'h', u8'j', u8'k', u8'm', u8'n', u8'p', u8'q', u8'r', u8's', u8't', u8'v', u8'w', u8'x', u8'y', u8'z'};
+// u8"0123456789ABCDEF"
+inline constexpr char8_t base16[] = {u8'0', u8'1', u8'2', u8'3', u8'4', u8'5', u8'6', u8'7',
+                                     u8'8', u8'9', u8'A', u8'B', u8'C', u8'D', u8'E', u8'F'};
+// u8"0123456789abcdef"
+inline constexpr char8_t base16_lower[] = {u8'0', u8'1', u8'2', u8'3', u8'4', u8'5', u8'6', u8'7',
+                                           u8'8', u8'9', u8'a', u8'b', u8'c', u8'd', u8'e', u8'f'};
 }; // namespace pattern
 
 template <typename T>
@@ -34,28 +66,28 @@ inline constexpr unsigned char to_uc(T t) noexcept
 }
 
 template <rfc4648_kind Kind>
-inline consteval char8_t const *get_alphabet() noexcept
+inline consteval decltype(auto) get_alphabet() noexcept
 {
     if constexpr (Kind == rfc4648_kind::base64)
-        return pattern::base64;
+        return (pattern::base64);
     if constexpr (Kind == rfc4648_kind::base64_url)
-        return pattern::base64_url;
+        return (pattern::base64_url);
     if constexpr (Kind == rfc4648_kind::base32)
-        return pattern::base32;
+        return (pattern::base32);
     if constexpr (Kind == rfc4648_kind::base32_lower)
-        return pattern::base32_lower;
+        return (pattern::base32_lower);
     if constexpr (Kind == rfc4648_kind::base32_hex)
-        return pattern::base32_hex;
+        return (pattern::base32_hex);
     if constexpr (Kind == rfc4648_kind::base32_hex_lower)
-        return pattern::base32_hex_lower;
+        return (pattern::base32_hex_lower);
     if constexpr (Kind == rfc4648_kind::base32_crockford)
-        return pattern::base32_crockford;
+        return (pattern::base32_crockford);
     if constexpr (Kind == rfc4648_kind::base32_crockford_lower)
-        return pattern::base32_crockford_lower;
+        return (pattern::base32_crockford_lower);
     if constexpr (Kind == rfc4648_kind::base16)
-        return pattern::base16;
+        return (pattern::base16);
     if constexpr (Kind == rfc4648_kind::base16_lower)
-        return pattern::base16_lower;
+        return (pattern::base16_lower);
 }
 
 template <std::size_t Count, typename T>
@@ -98,7 +130,7 @@ inline constexpr auto chars_to_int_big_endian(T begin)
     }
 }
 
-template <char8_t const *Alphabet, typename I, typename O>
+template <auto Alphabet, typename I, typename O>
 inline constexpr void encode_impl_b64_6(I begin, O &first)
 {
     auto data = chars_to_int_big_endian<6>(begin);
@@ -121,7 +153,7 @@ inline constexpr void encode_impl_b64_6(I begin, O &first)
     ++first;
 }
 
-template <char8_t const *Alphabet, typename I, typename O>
+template <auto Alphabet, typename I, typename O>
 inline constexpr void encode_impl_b64_3(I begin, O &first)
 {
     auto data = chars_to_int_big_endian<3>(begin);
@@ -136,7 +168,7 @@ inline constexpr void encode_impl_b64_3(I begin, O &first)
     ++first;
 }
 
-template <char8_t const *Alphabet, bool Padding, typename I, typename O>
+template <auto Alphabet, bool Padding, typename I, typename O>
 inline constexpr void encode_impl_b64_2(I begin, O &first)
 {
     auto data = chars_to_int_big_endian<2>(begin);
@@ -150,12 +182,12 @@ inline constexpr void encode_impl_b64_2(I begin, O &first)
 
     if constexpr (Padding)
     {
-        *first = Alphabet[64];
+        *first = u8'=';
         ++first;
     }
 }
 
-template <char8_t const *Alphabet, bool Padding, typename I, typename O>
+template <auto Alphabet, bool Padding, typename I, typename O>
 inline constexpr void encode_impl_b64_1(I begin, O &first)
 {
     auto a = to_uc(*begin);
@@ -169,14 +201,14 @@ inline constexpr void encode_impl_b64_1(I begin, O &first)
 
     if constexpr (Padding)
     {
-        *first = Alphabet[64]; // pad1
+        *first = u8'='; // pad1
         ++first;
-        *first = Alphabet[64]; // pad2
+        *first = u8'='; // pad2
         ++first;
     }
 }
 
-template <char8_t const *Alphabet, bool Padding, typename I, typename O>
+template <auto Alphabet, bool Padding, typename I, typename O>
 inline constexpr void encode_impl_b64(I begin, I end, O &first)
 {
     if constexpr (sizeof(std::size_t) == 8)
@@ -196,7 +228,7 @@ inline constexpr void encode_impl_b64(I begin, I end, O &first)
     // == 0  fallthrough
 }
 
-template <char8_t const *Alphabet, typename I, typename O>
+template <auto Alphabet, typename I, typename O>
 inline constexpr void encode_impl_b64_ctx(detail::buf_ref buf, detail::sig_ref sig, I begin, I end, O &first)
 {
     if (sig == 2) // 0, 1, 2
@@ -262,7 +294,7 @@ inline constexpr void encode_impl_b64_ctx(detail::buf_ref buf, detail::sig_ref s
     }
 }
 
-template <char8_t const *Alphabet, bool Padding, typename O>
+template <auto Alphabet, bool Padding, typename O>
 inline constexpr void encode_impl_b64_ctx(detail::buf_ref buf, detail::sig_ref sig, O &first)
 {
     if (sig == 2)
@@ -275,7 +307,7 @@ inline constexpr void encode_impl_b64_ctx(detail::buf_ref buf, detail::sig_ref s
     sig = 0;
 }
 
-template <char8_t const *Alphabet, typename I, typename O>
+template <auto Alphabet, typename I, typename O>
 inline constexpr void encode_impl_b32_5(I begin, O &first)
 {
     auto data = chars_to_int_big_endian<5>(begin);
@@ -298,7 +330,7 @@ inline constexpr void encode_impl_b32_5(I begin, O &first)
     ++first;
 }
 
-template <char8_t const *Alphabet, bool Padding, typename I, typename O>
+template <auto Alphabet, bool Padding, typename I, typename O>
 inline constexpr void encode_impl_b32_4(I begin, O &first)
 {
     auto data = chars_to_int_big_endian<4>(begin);
@@ -321,12 +353,12 @@ inline constexpr void encode_impl_b32_4(I begin, O &first)
 
     if constexpr (Padding)
     {
-        *first = Alphabet[32];
+        *first = u8'=';
         ++first;
     }
 }
 
-template <char8_t const *Alphabet, bool Padding, typename I, typename O>
+template <auto Alphabet, bool Padding, typename I, typename O>
 inline constexpr void encode_impl_b32_3(I begin, O &first)
 {
     auto data = chars_to_int_big_endian<3>(begin);
@@ -344,16 +376,16 @@ inline constexpr void encode_impl_b32_3(I begin, O &first)
 
     if constexpr (Padding)
     {
-        *first = Alphabet[32];
+        *first = u8'=';
         ++first;
-        *first = Alphabet[32];
+        *first = u8'=';
         ++first;
-        *first = Alphabet[32];
+        *first = u8'=';
         ++first;
     }
 }
 
-template <char8_t const *Alphabet, bool Padding, typename I, typename O>
+template <auto Alphabet, bool Padding, typename I, typename O>
 inline constexpr void encode_impl_b32_2(I begin, O &first)
 {
     auto data = chars_to_int_big_endian<2>(begin);
@@ -369,18 +401,18 @@ inline constexpr void encode_impl_b32_2(I begin, O &first)
 
     if constexpr (Padding)
     {
-        *first = Alphabet[32];
+        *first = u8'=';
         ++first;
-        *first = Alphabet[32];
+        *first = u8'=';
         ++first;
-        *first = Alphabet[32];
+        *first = u8'=';
         ++first;
-        *first = Alphabet[32];
+        *first = u8'=';
         ++first;
     }
 }
 
-template <char8_t const *Alphabet, bool Padding, typename I, typename O>
+template <auto Alphabet, bool Padding, typename I, typename O>
 inline constexpr void encode_impl_b32_1(I begin, O &first)
 {
     auto a = to_uc(*(begin));
@@ -392,22 +424,22 @@ inline constexpr void encode_impl_b32_1(I begin, O &first)
 
     if constexpr (Padding)
     {
-        *first = Alphabet[32];
+        *first = u8'=';
         ++first;
-        *first = Alphabet[32];
+        *first = u8'=';
         ++first;
-        *first = Alphabet[32];
+        *first = u8'=';
         ++first;
-        *first = Alphabet[32];
+        *first = u8'=';
         ++first;
-        *first = Alphabet[32];
+        *first = u8'=';
         ++first;
-        *first = Alphabet[32];
+        *first = u8'=';
         ++first;
     }
 }
 
-template <char8_t const *Alphabet, bool Padding, typename I, typename O>
+template <auto Alphabet, bool Padding, typename I, typename O>
 inline constexpr void encode_impl_b32(I begin, I end, O &first)
 {
     for (; end - begin > 4; begin += 5)
@@ -424,7 +456,7 @@ inline constexpr void encode_impl_b32(I begin, I end, O &first)
     // == 0  fallthrough
 }
 
-template <char8_t const *Alphabet, typename I, typename O>
+template <auto Alphabet, typename I, typename O>
 inline constexpr void encode_impl_b32_ctx(detail::buf_ref buf, detail::sig_ref sig, I begin, I end, O &first)
 {
 #if __has_cpp_attribute(assume)
@@ -460,7 +492,7 @@ inline constexpr void encode_impl_b32_ctx(detail::buf_ref buf, detail::sig_ref s
         buf[i] = to_uc(*begin);
 }
 
-template <char8_t const *Alphabet, bool Padding, typename A, typename O>
+template <auto Alphabet, bool Padding, typename A, typename O>
 inline constexpr void encode_impl_b32_ctx(detail::buf_ref buf, detail::sig_ref sig, O &first)
 {
     if (sig == 1)
@@ -475,7 +507,7 @@ inline constexpr void encode_impl_b32_ctx(detail::buf_ref buf, detail::sig_ref s
     sig = 0;
 }
 
-template <char8_t const *Alphabet, typename I, typename O>
+template <auto Alphabet, typename I, typename O>
 inline constexpr void encode_impl_b16(I begin, I end, O &first)
 {
     if constexpr (sizeof(size_t) == 8)

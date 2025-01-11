@@ -226,8 +226,10 @@ inline constexpr char8_t base16_mixed[] = {
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 } // namespace table
 
+using table_ref = std::add_lvalue_reference_t<decltype(table::base64)>;
+
 template <rfc4648_kind Kind>
-inline consteval auto get_table() noexcept
+inline consteval table_ref get_table() noexcept
 {
     if constexpr (Kind == rfc4648_kind::base64)
         return table::base64;
@@ -282,7 +284,7 @@ inline constexpr bool is_valid(T t, unsigned char u) noexcept
     return valid_stage1(t) && valid_stage2(u);
 }
 
-template <char8_t const *Table, typename T>
+template <table_ref Table, typename T>
 inline constexpr unsigned char decode_single(T t) noexcept
 {
     return Table[static_cast<unsigned char>(t)];
@@ -309,7 +311,7 @@ struct decode_status_b64_b32
 
     // If sig is not 0 at the end of decoding, then buf_ must be 0 and discarded.
 
-    template <char8_t const *Table, typename C, typename Out>
+    template <table_ref Table, typename C, typename Out>
     bool write_b64(C c, Out &first)
     {
         auto res = decode_single<Table>(c);
@@ -369,7 +371,7 @@ struct decode_status_b64_b32
         }
     }
 
-    template <char8_t const *Table, typename C, typename Out>
+    template <table_ref Table, typename C, typename Out>
     bool write_b32(C c, Out &first)
     {
         auto res = decode_single<Table>(c);
@@ -455,7 +457,7 @@ struct decode_status_b64_b32
     }
 };
 
-template <char8_t const *Table, bool Padding, typename In, typename Out>
+template <table_ref Table, bool Padding, typename In, typename Out>
 inline constexpr In decode_impl_b32(In begin, In end, Out &first)
 {
     static_assert(std::is_pointer_v<In>);
@@ -476,7 +478,7 @@ inline constexpr In decode_impl_b32(In begin, In end, Out &first)
     return begin;
 }
 
-template <char8_t const *Table, bool Padding, typename In, typename Out>
+template <table_ref Table, bool Padding, typename In, typename Out>
 inline constexpr In decode_impl_b64(In begin, In end, Out &first)
 {
     static_assert(std::is_pointer_v<In>);
@@ -497,7 +499,7 @@ inline constexpr In decode_impl_b64(In begin, In end, Out &first)
     return begin;
 }
 
-template <char8_t const *Table, typename In, typename Out>
+template <table_ref Table, typename In, typename Out>
 inline constexpr In decode_impl_b64_ctx(detail::sig_ref sig, detail::buf_ref buf, In begin, In end, Out &first)
 {
     static_assert(std::is_pointer_v<In>);
@@ -516,7 +518,7 @@ inline constexpr In decode_impl_b64_ctx(detail::sig_ref sig, detail::buf_ref buf
     return begin;
 }
 
-template <char8_t const *Table, typename In, typename Out>
+template <table_ref Table, typename In, typename Out>
 inline constexpr In decode_impl_b32_ctx(detail::sig_ref sig, detail::buf_ref buf, In begin, In end, Out &first)
 {
     static_assert(std::is_pointer_v<In>);
@@ -535,7 +537,7 @@ inline constexpr In decode_impl_b32_ctx(detail::sig_ref sig, detail::buf_ref buf
     return begin;
 }
 
-template <char8_t const *Table, bool Padding, typename In>
+template <table_ref Table, bool Padding, typename In>
 inline constexpr void decode_impl_b64_ctx(detail::sig_ref sig, detail::buf_ref buf, In &begin, In &end) noexcept
 {
     auto sig_ = sig;
@@ -548,7 +550,7 @@ inline constexpr void decode_impl_b64_ctx(detail::sig_ref sig, detail::buf_ref b
     }
 }
 
-template <char8_t const *Table, bool Padding, typename In>
+template <table_ref Table, bool Padding, typename In>
 inline constexpr void decode_impl_b32_ctx(detail::sig_ref sig, detail::buf_ref buf, In &begin, In &end) noexcept
 {
     auto sig_ = sig;
@@ -561,7 +563,7 @@ inline constexpr void decode_impl_b32_ctx(detail::sig_ref sig, detail::buf_ref b
     }
 }
 
-template <char8_t const *Table, typename In, typename Out>
+template <table_ref Table, typename In, typename Out>
 inline constexpr In decode_impl_b16(In begin, In end, Out &first)
 {
     static_assert(std::is_pointer_v<In>);
@@ -594,7 +596,7 @@ inline constexpr In decode_impl_b16(In begin, In end, Out &first)
     return begin;
 }
 
-template <char8_t const *Table, typename In, typename Out>
+template <table_ref Table, typename In, typename Out>
 inline constexpr In decode_impl_b16_ctx(detail::sig_ref sig, detail::buf_ref buf, In begin, In end, Out &first)
 {
     static_assert(std::is_pointer_v<In>);
