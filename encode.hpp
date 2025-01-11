@@ -492,7 +492,7 @@ inline constexpr void encode_impl_b32_ctx(detail::buf_ref buf, detail::sig_ref s
         buf[i] = to_uc(*begin);
 }
 
-template <auto Alphabet, bool Padding, typename A, typename O>
+template <auto Alphabet, bool Padding, typename O>
 inline constexpr void encode_impl_b32_ctx(detail::buf_ref buf, detail::sig_ref sig, O &first)
 {
     if (sig == 1)
