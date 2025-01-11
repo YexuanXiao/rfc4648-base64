@@ -568,29 +568,40 @@ inline constexpr In decode_impl_b16(In begin, In end, Out &first)
 {
     static_assert(std::is_pointer_v<In>);
 
-    unsigned char sig{};
-    unsigned char buf;
+    while (end - begin > 1)
+    {
+        auto c0 = *begin;
+        auto res0 = decode_single<Table>(c0);
 
-    for (; begin != end; ++begin)
+        if (!is_valid(c0, res0))
+            return begin;
+
+        ++begin;
+
+        auto c1 = *begin;
+        auto res1 = decode_single<Table>(c1);
+
+        if (!is_valid(c1, res1))
+            return begin;
+
+        ++begin;
+
+        *first = (res0 << 4) | res1;
+        ++first;
+    }
+
+    if (end != begin)
     {
         auto c = *begin;
         auto res = decode_single<Table>(c);
 
         if (!is_valid(c, res))
-            break;
+            return begin;
 
-        ++sig;
+        ++begin;
 
-        if (sig == 1)
-        {
-            buf = res << 4;
-        }
-        else if (sig == 2)
-        {
-            *first = buf | res;
-            ++first;
-            sig = 0;
-        }
+        *first = res << 4;
+        ++first;
     }
 
     return begin;
