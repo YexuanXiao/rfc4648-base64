@@ -84,7 +84,7 @@ Let `n - 1` is the length of the output as specified by RFC 4648.
 
 If [`begin`, `end`) is not a valid range, or [`first`, `first + n`) is not a valid range, or if [`begin`, `end`) and [`first`, `first + n`) overlap, or if `r` and [`first`, `first + n`) overlap, the behavior is undefined.
 
-If the template parameter `Padding` is false then the padding character `=` is not written.
+If the template parameter `Padding` is `false` then the padding character `=` is not written.
 
 The decode functions will return immediately if there are invalid characters (including `=`) within the range [`begin`, `end`), then `rfc4648_decode_result<In, Out>::end` points to the first invalid character.
 

@@ -599,7 +599,6 @@ inline constexpr Out rfc4648_encode(rfc4648_context &ctx, In begin, In end, Out 
 
 template <rfc4648_kind Kind = rfc4648_kind::base64, typename R, typename Out>
 inline constexpr Out rfc4648_encode(rfc4648_context &ctx, R &&r, Out first)
-
 {
     return rfc4648_encode<Kind>(ctx, std::ranges::begin(r), std::ranges::end(r), first);
 }
