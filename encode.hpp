@@ -62,7 +62,7 @@ template <typename T>
 inline constexpr unsigned char to_uc(T t) noexcept
 {
     // T is char, unsigned char or std::byte
-    return static_cast<unsigned char>(t);
+    return std::bit_cast<unsigned char>(t);
 }
 
 template <rfc4648_kind Kind>
