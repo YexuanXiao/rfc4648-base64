@@ -274,7 +274,7 @@ inline constexpr void encode_impl_b64_ctx(detail::buf_ref buf, detail::sig_ref s
             encode_impl_b64_6<Alphabet>(begin, first);
     }
 
-    for (; end - begin > 3; begin += 3)
+    for (; end - begin > 2; begin += 3)
         encode_impl_b64_3<Alphabet>(begin, first);
 
     if (end - begin == 2)
@@ -446,13 +446,13 @@ inline constexpr void encode_impl_b32(I begin, I end, O &first)
         encode_impl_b32_5<Alphabet>(begin, first);
 
     if (end - begin == 4)
-        encode_impl_b32_4<Padding, Alphabet>(begin, first);
+        encode_impl_b32_4<Alphabet, Padding>(begin, first);
     else if (end - begin == 3)
-        encode_impl_b32_3<Padding, Alphabet>(begin, first);
+        encode_impl_b32_3<Alphabet, Padding>(begin, first);
     else if (end - begin == 2)
-        encode_impl_b32_2<Padding, Alphabet>(begin, first);
+        encode_impl_b32_2<Alphabet, Padding>(begin, first);
     else if (end - begin) // == 1
-        encode_impl_b32_1<Padding, Alphabet>(begin, first);
+        encode_impl_b32_1<Alphabet, Padding>(begin, first);
     // == 0  fallthrough
 }
 
@@ -496,13 +496,13 @@ template <auto Alphabet, bool Padding, typename O>
 inline constexpr void encode_impl_b32_ctx(detail::buf_ref buf, detail::sig_ref sig, O &first)
 {
     if (sig == 1)
-        encode_impl_b32_1<Padding, Alphabet>(std::begin(buf), first);
+        encode_impl_b32_1<Alphabet, Padding>(std::begin(buf), first);
     else if (sig == 2)
-        encode_impl_b32_2<Padding, Alphabet>(std::begin(buf), first);
+        encode_impl_b32_2<Alphabet, Padding>(std::begin(buf), first);
     else if (sig == 3)
-        encode_impl_b32_3<Padding, Alphabet>(std::begin(buf), first);
+        encode_impl_b32_3<Alphabet, Padding>(std::begin(buf), first);
     else if (sig == 4)
-        encode_impl_b32_4<Padding, Alphabet>(std::begin(buf), first);
+        encode_impl_b32_4<Alphabet, Padding>(std::begin(buf), first);
 
     sig = 0;
 }

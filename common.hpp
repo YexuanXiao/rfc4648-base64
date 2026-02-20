@@ -2,6 +2,7 @@
 
 #include <climits>
 #include <memory>      // std::to_address
+#include <tuple>
 #include <type_traits> // std::remove_reference
 
 static_assert(CHAR_BIT == 8);
