@@ -1,5 +1,11 @@
 #pragma once
 
+#pragma push_macro("BIZWEN_EXPORT")
+#undef BIZWEN_EXPORT
+
+#if !defined(BIZWEN_MODULE)
+#define BIZWEN_EXPORT
+
 #include <concepts>
 #include <cstring>
 #include <iterator>
@@ -7,6 +13,12 @@
 #include <utility>
 
 #include "./common.hpp"
+
+#else
+
+#define BIZWEN_EXPORT export
+
+#endif
 
 namespace bizwen
 {
@@ -451,7 +463,7 @@ struct decode_status_b64_b32
     {
         static_assert(std::is_pointer_v<In>);
 
-        if (sig_ == 2 | sig_ == 4 | sig_ == 5 | sig_ == 7)
+        if ((sig_ == 2) | (sig_ == 4) | (sig_ == 5) | (sig_ == 7))
         {
             for (std::size_t i{}; i != (8 - sig_); ++i)
             {
@@ -657,7 +669,7 @@ inline constexpr In decode_impl_b16_ctx(detail::sig_ref sig, detail::buf_ref buf
 }
 } // namespace decode_impl
 
-template <rfc4648_kind Kind = rfc4648_kind::base64, bool Padding = true, typename In, typename Out>
+BIZWEN_EXPORT template <rfc4648_kind Kind = rfc4648_kind::base64, bool Padding = true, typename In, typename Out>
 inline constexpr rfc4648_decode_result<In, Out> rfc4648_decode(In begin, In end, Out first)
 {
     using in_char = std::iterator_traits<In>::value_type;
@@ -684,13 +696,13 @@ inline constexpr rfc4648_decode_result<In, Out> rfc4648_decode(In begin, In end,
     return {begin + (last_ptr - begin_ptr), std::move(first)};
 }
 
-template <rfc4648_kind Kind = rfc4648_kind::base64, bool Padding = true, typename R, typename Out>
+BIZWEN_EXPORT template <rfc4648_kind Kind = rfc4648_kind::base64, bool Padding = true, typename R, typename Out>
 inline constexpr auto rfc4648_decode(R &&r, Out first)
 {
     return rfc4648_decode<Kind, Padding>(std::ranges::begin(r), std::ranges::end(r), first);
 }
 
-template <rfc4648_kind Kind = rfc4648_kind::base64, typename In, typename Out>
+BIZWEN_EXPORT template <rfc4648_kind Kind = rfc4648_kind::base64, typename In, typename Out>
 inline constexpr rfc4648_decode_result<In, Out> rfc4648_decode(rfc4648_context &ctx, In begin, In end, Out first)
 {
     using in_char = std::iterator_traits<In>::value_type;
@@ -720,13 +732,13 @@ inline constexpr rfc4648_decode_result<In, Out> rfc4648_decode(rfc4648_context &
     return {begin + (last_ptr - begin_ptr), std::move(first)};
 }
 
-template <rfc4648_kind Kind = rfc4648_kind::base64, typename R, typename Out>
+BIZWEN_EXPORT template <rfc4648_kind Kind = rfc4648_kind::base64, typename R, typename Out>
 inline constexpr auto rfc4648_decode(rfc4648_context &ctx, R &&r, Out first)
 {
     return rfc4648_decode<Kind>(ctx, std::ranges::begin(r), std::ranges::end(r), first);
 }
 
-template <rfc4648_kind Kind = rfc4648_kind::base64, bool Padding = true, typename In>
+BIZWEN_EXPORT template <rfc4648_kind Kind = rfc4648_kind::base64, bool Padding = true, typename In>
 inline constexpr In rfc4648_decode(rfc4648_context &ctx, In begin, In end)
 {
     using in_char = std::iterator_traits<In>::value_type;
@@ -750,3 +762,5 @@ inline constexpr In rfc4648_decode(rfc4648_context &ctx, In begin, In end)
     return {begin + (last_ptr - begin_ptr)};
 }
 } // namespace bizwen
+
+#pragma pop_macro("BIZWEN_EXPORT")

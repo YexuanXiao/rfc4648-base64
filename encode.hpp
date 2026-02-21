@@ -1,5 +1,11 @@
 #pragma once
 
+#pragma push_macro("BIZWEN_EXPORT")
+#undef BIZWEN_EXPORT
+
+#if !defined(BIZWEN_MODULE)
+#define BIZWEN_EXPORT
+
 #include <algorithm>
 #include <bit>
 #include <concepts>
@@ -7,6 +13,12 @@
 #include <iterator>
 
 #include "./common.hpp"
+
+#else
+
+#define BIZWEN_EXPORT export
+
+#endif
 
 namespace bizwen
 {
@@ -544,7 +556,7 @@ inline constexpr void encode_impl_b16(I begin, I end, O &first)
 
 } // namespace encode_impl
 
-template <rfc4648_kind Kind = rfc4648_kind::base64, bool Padding = true, typename In, typename Out>
+BIZWEN_EXPORT template <rfc4648_kind Kind = rfc4648_kind::base64, bool Padding = true, typename In, typename Out>
 inline constexpr Out rfc4648_encode(In begin, In end, Out first)
 {
     using in_char = std::iterator_traits<In>::value_type;
@@ -566,14 +578,14 @@ inline constexpr Out rfc4648_encode(In begin, In end, Out first)
     return first;
 }
 
-template <rfc4648_kind Kind = rfc4648_kind::base64, bool Padding = true, typename R, typename Out>
+BIZWEN_EXPORT template <rfc4648_kind Kind = rfc4648_kind::base64, bool Padding = true, typename R, typename Out>
 inline constexpr Out rfc4648_encode(R &&r, Out first)
 {
     return rfc4648_encode<Kind, Padding>(std::ranges::begin(r), std::ranges::end(r), first);
 }
 
 // NB: don't need padding
-template <rfc4648_kind Kind = rfc4648_kind::base64, typename In, typename Out>
+BIZWEN_EXPORT template <rfc4648_kind Kind = rfc4648_kind::base64, typename In, typename Out>
 inline constexpr Out rfc4648_encode(rfc4648_context &ctx, In begin, In end, Out first)
 {
     using in_char = std::iterator_traits<In>::value_type;
@@ -597,13 +609,13 @@ inline constexpr Out rfc4648_encode(rfc4648_context &ctx, In begin, In end, Out 
     return first;
 }
 
-template <rfc4648_kind Kind = rfc4648_kind::base64, typename R, typename Out>
+BIZWEN_EXPORT template <rfc4648_kind Kind = rfc4648_kind::base64, typename R, typename Out>
 inline constexpr Out rfc4648_encode(rfc4648_context &ctx, R &&r, Out first)
 {
     return rfc4648_encode<Kind>(ctx, std::ranges::begin(r), std::ranges::end(r), first);
 }
 
-template <rfc4648_kind Kind = rfc4648_kind::base64, bool Padding = true, typename Out>
+BIZWEN_EXPORT template <rfc4648_kind Kind = rfc4648_kind::base64, bool Padding = true, typename Out>
 inline constexpr Out rfc4648_encode(rfc4648_context &ctx, Out first)
 {
     if constexpr (detail::get_family<Kind>() == rfc4648_kind::base64)
@@ -615,3 +627,5 @@ inline constexpr Out rfc4648_encode(rfc4648_context &ctx, Out first)
     return first;
 }
 } // namespace bizwen
+
+#pragma pop_macro("BIZWEN_EXPORT")
