@@ -1,3 +1,5 @@
+Due to the heavy burden of maintaining two versions of the API, this repository has been archived. Please use [the range version](https://github.com/yexuanxiao/rfc4648-afo).
+
 # rfc4648/base64/base32/base16-hex
 
 A plain header-only [RFC 4648](https://www.rfc-editor.org/rfc/rfc4648) encoding/decoding library, but with the most modern C++ API design.
